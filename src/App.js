@@ -28,7 +28,8 @@ class App extends Component {
       _desc = this.state.welcome.desc;
 
     } else if (this.state.mode == 'read') {
-
+      _title = this.state.contents[0].title;
+      _desc = this.state.contents[0].desc;
     }
   return (
     <div className="App">
@@ -37,7 +38,10 @@ class App extends Component {
             <h1><a href="/" onClick={function(e){
               console.log(e);
               e.preventDefault();
-            }}>{this.state.subject.title}</a></h1>
+              this.setState({
+                mode:"read"
+              });
+            }.bind(this)}>{this.state.subject.title}</a></h1>
             {this.state.subject.sub}
         </header>
       <Subject title="React" sub="for UI"></Subject>
