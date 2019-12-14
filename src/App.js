@@ -33,8 +33,14 @@ class App extends Component {
     }
   return (
     <div className="App">
-      {/* <Subject title={this.state.subject.title} sub={this.state.subject.sub}></Subject> */}
-      <header>
+      <Subject 
+      title={this.state.subject.title} 
+      sub={this.state.subject.sub}
+      onChangePage={function(){
+        this.setState({mode:'read'});
+      }.bind(this)}></Subject>
+
+      {/* <header>
             <h1><a href="/" onClick={function(e){
               console.log(e);
               e.preventDefault();
@@ -43,7 +49,7 @@ class App extends Component {
               });
             }.bind(this)}>{this.state.subject.title}</a></h1>
             {this.state.subject.sub}
-        </header>
+        </header> */}
       <Subject title="React" sub="for UI"></Subject>
       <TOC data={this.state.contents}></TOC>
       <Content title={_title} desc={_desc}></Content>
