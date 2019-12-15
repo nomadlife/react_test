@@ -11,8 +11,9 @@ import { render } from '@testing-library/react';
 class App extends Component {
   constructor(props){
     super(props);
+    this.max_content_id = 3;
     this.state = {
-      mode:"welcome",
+      mode:"create",
       selected_content_id:2,
       welcome:{title:"welcome",desc:"hello! React!!"},
       subject:{title:"WEB!!!", sub:"world wide web"},
@@ -46,9 +47,23 @@ class App extends Component {
       _article = <ReadContent title = {_title} desc = {_desc}></ReadContent>
 
     } else if (this.state.mode == 'create') {
-      _article = <CreateContent></CreateContent>
-
+      _article = <CreateContent onSubmit={function(_title,_desc){
+        // add content to this.state.content
+        this.max_content_id = this.max_content_id + 1;
+        // this.state.contents.push(
+        //   {id:this.max_content_id, title:_title, desc:_desc}
+        // );
+        var _contents = this.state.contents.concat(
+          {id:this.max_content_id, title:_title, desc:_desc}
+        )
+        this.setState({
+          contents:_contents
+        })
+        console.log(_title, _desc)
+        ;
+      }.bind(this)}></CreateContent>
     }
+
   return (
     <div className="App">
       <Subject 
@@ -58,26 +73,11 @@ class App extends Component {
         this.setState({mode:'welcome'});
       }.bind(this)}></Subject>
 
-      {/* <header>
-            <h1><a href="/" onClick={function(e){
-              console.log(e);
-              e.preventDefault();
-              this.setState({
-                mode:"read"
-              });
-            }.bind(this)}>{this.state.subject.title}</a></h1>
-            {this.state.subject.sub}
-        </header> */}
-      <Subject title="React" sub="for UI"></Subject>
       <TOC onChangePage={function(id){
-        // alert('hihi');
-        // debugger;
         this.setState({
           mode:'read',
           selected_content_id:Number(id)
         });
-        // selected_content_id:0;
-
       }.bind(this)} 
       data={this.state.contents}></TOC>
 
@@ -86,7 +86,9 @@ class App extends Component {
           mode:_mode
         });
       }.bind(this)}></Control>
+
       {_article}
+
     </div>
   );
     
