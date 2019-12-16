@@ -26,7 +26,7 @@ class App extends Component {
     }
   }
 
-  getRreadContent(){
+  getReadContent(){
     var i=0;
     while(i<this.state.contents.length){
       var data = this.state.contents[i];
@@ -40,14 +40,20 @@ class App extends Component {
   }
 getContent(){
   var _title, _desc, _article = null;
+
+
     if(this.state.mode == 'welcome'){
       _title = this.state.welcome.title;
       _desc = this.state.welcome.desc;
       _article = <ReadContent title = {_title} desc = {_desc}></ReadContent>
 
+
+
     } else if (this.state.mode == 'read') {
-      var _content = this.getRreadContent(); 
+      var _content = this.getReadContent(); 
       _article = <ReadContent title = {_content.title} desc = {_content.desc}></ReadContent>
+
+
 
     } else if (this.state.mode == 'create') {
       _article = <CreateContent onSubmit={function(_title,_desc){
@@ -61,17 +67,28 @@ getContent(){
 
         console.log(_title, _desc);
       }.bind(this)}></CreateContent>
-    } else if (this.state.mode == 'update'){
-      _article = <UpdateContent onSubmit={function(_title,_desc){
-        this.max_content_id = this.max_content_id + 1;
 
-        var newContents = Array.from(this.state.contents);
-        newContents.push({id:this.max_content_id, title:_title, desc:_desc});
+
+
+    } else if (this.state.mode == 'update'){
+      _content = this.getReadContent();
+      _article = <UpdateContent data={_content} onSubmit={function(_id, _title,_desc){
+        var _contents = Array.from(this.state.contents);
+
+        var i = 0;
+        while(i<_contents.length){
+          if(_contents[i].id == _id) {
+            _contents[i] = {id:_id, title:_title, desc:_desc}
+            break;
+          }
+          i = i + 1;
+        }
+
         this.setState({
-          contents:newContents
+          contents:_contents
         });
 
-        console.log(_title, _desc);
+        console.log(_id, _title, _desc);
       }.bind(this)}></UpdateContent>
     }
     return _article;
