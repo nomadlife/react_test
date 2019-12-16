@@ -62,7 +62,9 @@ getContent(){
         var newContents = Array.from(this.state.contents);
         newContents.push({id:this.max_content_id, title:_title, desc:_desc});
         this.setState({
-          contents:newContents
+          contents:newContents,
+          mode:'read',
+          selected_content_id:this.max_content_id
         });
 
         console.log(_title, _desc);
@@ -85,7 +87,8 @@ getContent(){
         }
 
         this.setState({
-          contents:_contents
+          contents:_contents,
+          mode:'read'
         });
 
         console.log(_id, _title, _desc);
