@@ -14,7 +14,7 @@ class App extends Component {
     super(props);
     this.max_content_id = 3;
     this.state = {
-      mode:"create",
+      mode:"welcome",
       selected_content_id:2,
       welcome:{title:"welcome",desc:"hello! React!!"},
       subject:{title:"WEB!!!", sub:"world wide web"},
@@ -103,22 +103,36 @@ getContent(){
       <Subject 
       title={this.state.subject.title} 
       sub={this.state.subject.sub}
-      onChangePage={function(){
-        this.setState({mode:'welcome'});
+      onChangePage={function(){this.setState({mode:'welcome'});
       }.bind(this)}></Subject>
 
       <TOC onChangePage={function(id){
-        this.setState({
-          mode:'read',
-          selected_content_id:Number(id)
-        });
+        this.setState({mode:'read',
+          selected_content_id:Number(id)});
       }.bind(this)} 
       data={this.state.contents}></TOC>
 
       <Control onChangeMode={function(_mode){
-        this.setState({
-          mode:_mode
-        });
+        if(_mode == 'delete'){
+          if(window.confirm('really?')){
+            var _contents = Array.from(this.state.contents);
+            var i=0;
+            while(i<this.state.contents.length){
+              if(_contents[i].id == this.state.selected_content_id){
+                _contents.splice(i,1);
+              }
+              i = i+1;
+            }
+            this.setState({
+              mode:'welcome',
+              contents:_contents
+            });
+            alert('deleted!');
+          }
+
+        } else {
+          this.setState({mode:_mode});
+        }
       }.bind(this)}></Control>
 
       {this.getContent()}
