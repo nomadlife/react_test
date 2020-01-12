@@ -54,17 +54,8 @@ class App extends Component {
   deleteArticle = mode => {
     if (mode === "delete") {
       if (window.confirm("really?")) {
-        var contents = Array.from(this.state.contents);
-        var id = this.state.selected_content_id;
-        contents.splice(id - 1, 1);
-
-        this.setState({
-          mode: "welcome",
-          contents
-        });
-        alert("deleted!");
-
-        console.log("delete test : ", contents);
+        const contents = this.state.contents.filter(c => c.id !== this.state.selected_content_id);
+        this.setState({ mode: "welcome", contents });
       }
     } else {
       this.setState({ mode });
