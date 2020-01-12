@@ -7,6 +7,7 @@ import UpdateContent from "./components/UpdateContent";
 import Subject from "./components/Subject";
 import Control from "./components/Control";
 // import { render } from "@testing-library/react";
+import NavBar from "./components/navbar";
 
 class App extends Component {
   constructor(props) {
@@ -92,6 +93,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <NavBar />
         <Subject
           title={this.state.subject.title}
           sub={this.state.subject.sub}

@@ -37,7 +37,14 @@ class Control extends Component {
             type="button"
             value="delete"
           ></input>
+
         </li>
+        
+        <button
+          className="btn btn-danger btn-sm"
+          onClick={() => this.props.onChangeMode("delete")}
+        >  remove
+        </button>
       </ul>
     );
   }
