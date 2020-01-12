@@ -1,148 +1,129 @@
-import React, { Component } from 'react';
-import './App.css';
-import TOC from './components/TOC';
-import ReadContent from './components/ReadContent';
-import CreateContent from './components/CreateContent';
-import UpdateContent from './components/UpdateContent';
-import Subject from './components/Subject';
-import Control from './components/Control';
-import { render } from '@testing-library/react';
-
+import React, { Component } from "react";
+import "./App.css";
+import TOC from "./components/TOC";
+import ReadContent from "./components/ReadContent";
+import CreateContent from "./components/CreateContent";
+import UpdateContent from "./components/UpdateContent";
+import Subject from "./components/Subject";
+import Control from "./components/Control";
+// import { render } from "@testing-library/react";
 
 class App extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.max_content_id = 3;
     this.state = {
-      mode:"welcome",
-      selected_content_id:2,
-      welcome:{title:"welcome",desc:"hello! React!!"},
-      subject:{title:"WEB!!!", sub:"world wide web"},
-      contents:[
-        {id:1, title:"HTML", desc:"HTML is ..."},
-        {id:2, title:"CSS", desc:"CSS is ..."},
-        {id:3, title:"Javascript", desc:"Javascript is ..."}
-  ]
-    }
+      mode: "welcome",
+      selected_content_id: 2,
+      welcome: { title: "welcome", desc: "hello! React!!" },
+      subject: { title: "WEB!!!", sub: "world wide web" },
+      contents: [
+        { id: 1, title: "HTML", desc: "HTML is ..." },
+        { id: 2, title: "CSS", desc: "CSS is ..." },
+        { id: 3, title: "Javascript", desc: "Javascript is ..." }
+      ]
+    };
   }
 
-  getReadContent(){
-    var i=0;
-    while(i<this.state.contents.length){
-      var data = this.state.contents[i];
-      if(data.id === this.state.selected_content_id){
-        return data;
-        
-        break;
+  getReadContent() {
+    const data = this.state.contents.filter(
+      content => content.id === this.state.selected_content_id
+    )[0];
+    return data;
+  }
+
+  createArticle = (title, desc) => {
+    const new_id = this.max_content_id + 1;
+    this.max_content_id = new_id;
+    this.setState({
+      contents: [...this.state.contents, { id: new_id, title, desc }],
+      mode: "read",
+      selected_content_id: new_id
+    });
+  };
+
+  updateArticle = (id, title, desc) => {
+    var contents = Array.from(this.state.contents);
+    contents.splice(id - 1, 1, { id, title, desc });
+    this.setState({
+      contents,
+      mode: "read"
+    });
+  };
+
+  deleteArticle = mode => {
+    if (mode === "delete") {
+      if (window.confirm("really?")) {
+        var contents = Array.from(this.state.contents);
+        var id = this.state.selected_content_id;
+        contents.splice(id - 1, 1);
+
+        this.setState({
+          mode: "welcome",
+          contents
+        });
+        alert("deleted!");
+
+        console.log("delete test : ", contents);
       }
-      i = i + 1;
+    } else {
+      this.setState({ mode });
     }
-  }
-getContent(){
-  var _title, _desc, _article = null;
+  };
 
+  getContent() {
+    var currentArticle = null;
 
-    if(this.state.mode == 'welcome'){
-      _title = this.state.welcome.title;
-      _desc = this.state.welcome.desc;
-      _article = <ReadContent title = {_title} desc = {_desc}></ReadContent>
-
-
-
-    } else if (this.state.mode == 'read') {
-      var _content = this.getReadContent(); 
-      _article = <ReadContent title = {_content.title} desc = {_content.desc}></ReadContent>
-
-
-
-    } else if (this.state.mode == 'create') {
-      _article = <CreateContent onSubmit={function(_title,_desc){
-        this.max_content_id = this.max_content_id + 1;
-
-        var newContents = Array.from(this.state.contents);
-        newContents.push({id:this.max_content_id, title:_title, desc:_desc});
-        this.setState({
-          contents:newContents,
-          mode:'read',
-          selected_content_id:this.max_content_id
-        });
-
-        console.log(_title, _desc);
-      }.bind(this)}></CreateContent>
-
-
-
-    } else if (this.state.mode == 'update'){
+    if (this.state.mode === "welcome") {
+      const { title, desc } = this.state.welcome;
+      currentArticle = <ReadContent title={title} desc={desc}></ReadContent>;
+    } else if (this.state.mode === "read") {
+      var _content = this.getReadContent();
+      currentArticle = (
+        <ReadContent title={_content.title} desc={_content.desc}></ReadContent>
+      );
+    } else if (this.state.mode === "create") {
+      currentArticle = (
+        <CreateContent onSubmit={this.createArticle}></CreateContent>
+      );
+    } else if (this.state.mode === "update") {
       _content = this.getReadContent();
-      _article = <UpdateContent data={_content} onSubmit={function(_id, _title,_desc){
-        var _contents = Array.from(this.state.contents);
-
-        var i = 0;
-        while(i<_contents.length){
-          if(_contents[i].id == _id) {
-            _contents[i] = {id:_id, title:_title, desc:_desc}
-            break;
-          }
-          i = i + 1;
-        }
-
-        this.setState({
-          contents:_contents,
-          mode:'read'
-        });
-
-        console.log(_id, _title, _desc);
-      }.bind(this)}></UpdateContent>
+      currentArticle = (
+        <UpdateContent
+          data={_content}
+          onSubmit={this.updateArticle}
+        ></UpdateContent>
+      );
     }
-    return _article;
-}
+    return currentArticle;
+  }
 
   render() {
-  return (
-    <div className="App">
-      <Subject 
-      title={this.state.subject.title} 
-      sub={this.state.subject.sub}
-      onChangePage={function(){this.setState({mode:'welcome'});
-      }.bind(this)}></Subject>
+    return (
+      <div className="App">
+        <Subject
+          title={this.state.subject.title}
+          sub={this.state.subject.sub}
+          onChangePage={() => {
+            this.setState({ mode: "welcome" });
+          }}
+        ></Subject>
 
-      <TOC onChangePage={function(id){
-        this.setState({mode:'read',
-          selected_content_id:Number(id)});
-      }.bind(this)} 
-      data={this.state.contents}></TOC>
+        <TOC
+          onChangePage={id => {
+            this.setState({ mode: "read", selected_content_id: Number(id) });
+          }}
+          data={this.state.contents}
+        ></TOC>
 
-      <Control onChangeMode={function(_mode){
-        if(_mode == 'delete'){
-          if(window.confirm('really?')){
-            var _contents = Array.from(this.state.contents);
-            var i=0;
-            while(i<this.state.contents.length){
-              if(_contents[i].id == this.state.selected_content_id){
-                _contents.splice(i,1);
-              }
-              i = i+1;
-            }
-            this.setState({
-              mode:'welcome',
-              contents:_contents
-            });
-            alert('deleted!');
-          }
+        <Control
+          onChangeMode={this.deleteArticle}
+        ></Control>
 
-        } else {
-          this.setState({mode:_mode});
-        }
-      }.bind(this)}></Control>
-
-      {this.getContent()}
-
-    </div>
-  );
-    
+        {this.getContent()}
+      </div>
+    );
   }
 }
-
-
 
 export default App;
